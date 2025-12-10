@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, Shield, Truck, RefreshCw, Mail, Phone, MapPin, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Shield, Truck, RefreshCw, Mail, Phone, MapPin, Clock, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import Navbar from '@/components/custom/navbar';
 import Footer from '@/components/custom/footer';
 import { storage } from '@/lib/storage';
@@ -47,7 +47,7 @@ function ProductSlider({ images, name }: { images: string[], name: string }) {
       >
         <img
           src={images[currentIndex]}
-          alt={`${name} - ${currentIndex === 0 ? 'Frente' : 'Verso'}`}
+          alt={`${name} - Imagem ${currentIndex + 1}`}
           className="w-full h-full object-cover transition-opacity duration-300"
         />
         
@@ -85,9 +85,9 @@ function ProductSlider({ images, name }: { images: string[], name: string }) {
               ))}
             </div>
 
-            {/* Label Frente/Verso */}
+            {/* Label com número da imagem */}
             <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-10">
-              {currentIndex === 0 ? 'Frente' : 'Verso'}
+              {currentIndex + 1}/{images.length}
             </div>
           </>
         )}
@@ -98,6 +98,7 @@ function ProductSlider({ images, name }: { images: string[], name: string }) {
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [expandedDescription, setExpandedDescription] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -164,6 +165,37 @@ export default function Home() {
       ], 
       name: "Camiseta Bet On Yourself",
       color: "Verde Menta"
+    },
+    { 
+      id: 5, 
+      images: [
+        "https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/bf8c97a2-40e7-4d7e-a61b-6ea43aa5d158.jpg",
+        "https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/d6a1c5d1-a324-451f-abe0-d0b11d424221.jpg",
+        "https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/e9b42cbc-ae2d-4d84-aca7-ca896cc59bf8.jpg",
+        "https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/623f9c0d-8013-4db5-bb0f-783c2007b5a3.jpg"
+      ], 
+      name: "Roleta Cassino Premium",
+      color: "Preto/Vermelho/Dourado",
+      description: "Roda de roleta de 10 polegadas - Jogos de cassino com roda giratória e torre central",
+      brand: "Trademark Games",
+      model: "ALLINONEWHEEL2",
+      characteristics: {
+        dimensions: {
+          length: "25 cm",
+          height: "5 cm"
+        },
+        materials: "Metal, Alumínio",
+        players: {
+          min: 1,
+          max: 8
+        },
+        pieces: 1,
+        recommendedAge: "14 anos ou mais"
+      },
+      packageContent: [
+        "1 x Roda de roleta com uma torre central giratória",
+        "2 x Bolas"
+      ]
     }
   ];
 
@@ -250,11 +282,11 @@ export default function Home() {
               Nossos Produtos
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Confira nossa coleção exclusiva. Deslize para ver frente e verso de cada modelo.
+              Confira nossa coleção exclusiva. Deslize para ver todas as imagens de cada modelo.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
             {products.map((product) => (
               <div
                 key={product.id}
@@ -266,7 +298,72 @@ export default function Home() {
                     {product.name}
                   </h3>
                   <p className="text-sm text-gray-500 mb-3">Cor: {product.color}</p>
-                  <div className="flex items-center justify-center">
+                  
+                  {/* Descrição expansível para Roleta Cassino Premium */}
+                  {product.id === 5 && product.description && (
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <button
+                        onClick={() => setExpandedDescription(!expandedDescription)}
+                        className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 font-medium transition-colors duration-200"
+                      >
+                        <span className="text-lg leading-none">...</span>
+                        <ChevronDown 
+                          className={`w-4 h-4 transition-transform duration-300 ${
+                            expandedDescription ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+                      
+                      {expandedDescription && (
+                        <div className="mt-3 space-y-3 animate-fade-in">
+                          <div>
+                            <h4 className="text-xs font-semibold text-gray-900 mb-1">Descrição:</h4>
+                            <p className="text-xs text-gray-600 leading-relaxed">{product.description}</p>
+                          </div>
+                          
+                          {product.brand && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-gray-900 mb-1">Marca:</h4>
+                              <p className="text-xs text-gray-600">{product.brand}</p>
+                            </div>
+                          )}
+                          
+                          {product.model && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-gray-900 mb-1">Modelo:</h4>
+                              <p className="text-xs text-gray-600">{product.model}</p>
+                            </div>
+                          )}
+                          
+                          {product.characteristics && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-gray-900 mb-1">Características:</h4>
+                              <ul className="text-xs text-gray-600 space-y-1">
+                                <li>• Dimensões: {product.characteristics.dimensions.length} x {product.characteristics.dimensions.height}</li>
+                                <li>• Materiais: {product.characteristics.materials}</li>
+                                <li>• Jogadores: {product.characteristics.players.min} a {product.characteristics.players.max}</li>
+                                <li>• Peças: {product.characteristics.pieces}</li>
+                                <li>• Idade recomendada: {product.characteristics.recommendedAge}</li>
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {product.packageContent && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-gray-900 mb-1">Conteúdo do Pacote:</h4>
+                              <ul className="text-xs text-gray-600 space-y-1">
+                                {product.packageContent.map((item, idx) => (
+                                  <li key={idx}>• {item}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-center mt-4">
                     <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-full">
                       <Clock className="w-4 h-4" />
                       Em Breve
